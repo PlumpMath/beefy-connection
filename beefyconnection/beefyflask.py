@@ -24,7 +24,8 @@ def post():
     postal_field = "" if (request.form.get("postal") == None) else request.form.get("postal")
     irc_field = "" if (request.form.get("irc") == None) else request.form.get("irc")
     email_field = "" if (request.form.get("email") == None) else request.form.get("email")
-    databaseConnector.add_person(first_name=first_name_field,
+    try:
+        databaseConnector.add_person(first_name=first_name_field,
                                 last_name=last_name_field,
                                 phone=phone_field,
                                 city=city_field,
@@ -36,17 +37,19 @@ def post():
                                 interests="",
                                 email=email_field,
                                 fas="")
-    return ""
-
+        return jsonify(stat="Success")
+    except Exception as e:
+        return jsonify(**{ "stat" : "Error",
+                           "message" : str(e)})
 @app.route("/bc-upload",methods=['POST'])
 def upload():
     try:
         name = session['name']
         f = re.sub(r'data.*,','',request.form['photo'] +'++').decode('base64') 
         fn = open("%s/%s/%s" % (os.path.dirname(os.path.realpath(__file__)),"uploads",name + ".png"),'wb')
-	fn.write(f)
-	fn.close()
-	return jsonify(stat="Success")
+        fn.write(f)
+        fn.close()
+        return jsonify(stat="Success")
     except Exception as e:
         return jsonify(**{ "stat" : "Error",
                            "message" : str(e),
