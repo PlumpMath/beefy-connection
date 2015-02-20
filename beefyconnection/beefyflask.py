@@ -14,8 +14,33 @@ def form():
 @app.route("/bc-post",methods=['POST'])
 def post():
     session['name'] = request.form.get('first-name') + request.form.get('last-name')
-    return jsonify(status="Success")
-
+    #Needs some server side validation
+    databaseConnector = BeefyDatabase("sqlite:///person.db")
+    first_name_field = "" if (request.form.get("first-name") == None) else request.form.get("first-name")
+    last_name_field =  "" if (request.form.get("last-name") == None) else request.form.get("last-name")
+    phone_field = "" if (request.form.get("phone") == None) else request.form.get("phone")
+    city_field = "" if (request.form.get("city") == None) else request.form.get("city")
+    state_field = "" if (request.form.get("state") == None) else request.form.get("state")
+    postal_field = "" if (request.form.get("postal") == None) else request.form.get("postal")
+    irc_field = "" if (request.form.get("irc") == None) else request.form.get("irc")
+    email_field = "" if (request.form.get("email") == None) else request.form.get("email")
+    try:
+        databaseConnector.add_person(first_name=first_name_field,
+                                last_name=last_name_field,
+                                phone=phone_field,
+                                city=city_field,
+                                state=state_field,
+                                postal_code=postal_field,
+                                irc=irc_field,
+                                fb="",
+                                twitter="",
+                                interests="",
+                                email=email_field,
+                                fas="")
+        return jsonify(stat="Success")
+    except Exception as e:
+        return jsonify(**{ "stat" : "Error",
+                           "message" : str(e)})
 @app.route("/bc-upload",methods=['POST'])
 def upload():
     try:
