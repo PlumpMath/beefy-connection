@@ -37,9 +37,9 @@ def post():
                                 interests="",
                                 email=email_field,
                                 fas="")
-        return jsonify(stat="Success")
+        return jsonify(status="Success")
     except Exception as e:
-        return jsonify(**{ "stat" : "Error",
+        return jsonify(**{ "status" : "Error",
                            "message" : str(e)})
 @app.route("/bc-upload",methods=['POST'])
 def upload():
